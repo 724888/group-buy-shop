@@ -8,23 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-function badrequest(ctx, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return next()
-            .catch((err) => {
-            if (err.status === 400) {
-                ctx.status = 400;
-                ctx.body = {
-                    status: 0,
-                    errcode: 1001,
-                    errmsg: err.message
-                };
-            }
-            else {
-                throw err;
-            }
+const banner_service_1 = require("../service/banner.service");
+class BannerController {
+    static getIndexBanner(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const banners = yield banner_service_1.BannerService.getBanners();
+            ctx.body = banners.filter(b => b.is_activate === true && b.type === 1);
         });
-    });
+    }
+    static getBannerForCommunity(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            ctx.body = yield banner_service_1.BannerService.getBannerFromCommunityId(ctx.params.id);
+        });
+    }
 }
-exports.badrequest = badrequest;
-//# sourceMappingURL=bad.js.map
+exports.BannerController = BannerController;
+//# sourceMappingURL=banner.controller.js.map

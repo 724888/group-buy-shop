@@ -9,12 +9,15 @@ const userSchema = new Schema({
     openid: String,
     usertype: {
         type: Number,
-        default: 3
+        default: 3,
+        required: true
     },
     signup_date: {
         type: Date,
-        default: Date.now
-    }
+        default: Date.now,
+        required: true
+    },
+    password: String
 });
 userSchema.pre('save', function (next) {
     if (this.password) {

@@ -10,6 +10,7 @@
   "author": "Lurance",
   "license": "ISC",
   "dependencies": {
+    "@types/http-errors": "^1.6.1",
     "@types/js-md5": "^0.4.2",
     "@types/jsonwebtoken": "^7.2.5",
     "@types/koa": "^2.0.43",
@@ -20,6 +21,7 @@
     "@types/koa-static": "^4.0.0",
     "@types/mongoose": "^5.0.0",
     "@types/node-fetch": "^1.6.7",
+    "http-errors": "^1.6.2",
     "js-md5": "^0.7.3",
     "jsonwebtoken": "^8.1.1",
     "koa": "^2.4.1",

@@ -8,23 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-function badrequest(ctx, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return next()
-            .catch((err) => {
-            if (err.status === 400) {
-                ctx.status = 400;
-                ctx.body = {
-                    status: 0,
-                    errcode: 1001,
-                    errmsg: err.message
-                };
-            }
-            else {
-                throw err;
-            }
+class CommunityController {
+    static getCommunities(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
         });
-    });
+    }
 }
-exports.badrequest = badrequest;
-//# sourceMappingURL=bad.js.map
+exports.CommunityController = CommunityController;
+//# sourceMappingURL=community.controller.js.map
