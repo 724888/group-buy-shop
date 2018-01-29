@@ -1,0 +1,47 @@
+import {AuthService} from "../service/auth.service";
+
+export class AuthController {
+    static async getOpenid(ctx, next) {
+        const code = ctx.request.body.code;
+        const openid = await AuthService.getUserOpenid(code);
+        if (openid) {
+            const user = await AuthService.getUserFromOpenId(openid);
+            if (user) {
+                ctx.body = {
+                    status: 2,
+                    msg: '该用户已经注册过',
+                    token: AuthService.jwtSign(user),
+                    usertype: user.usertype,
+                    gen_time: new Date().getTime(),
+                }
+            } else {
+                const newUser = await AuthService.saveUser(openid, 3);
+                ctx.body = {
+                    status: 1,
+                    msg: '该用户首次使用，需补全手机号',
+                    token: AuthService.jwtSign(newUser),
+                    usertype: newUser.usertype,
+                    gen_time: new Date().getTime()
+                }
+            }
+        } else {
+            ctx.throw(400, '无效的code')
+        }
+    }
+
+    static async completeInformation(ctx, next) {
+        const username = ctx.request.body.username;
+        const check = await AuthService.checkUsernameIfRepeat(username);
+        if (check) {
+            const user = await AuthService.updateUser(ctx.state.user._id, username, ctx.state.user.usertype);
+            ctx.body = {
+                status: 1,
+                token: AuthService.jwtSign(user),
+                usertype: user.usertype,
+                gen_time: new Date().getTime()
+            }
+        } else {
+            ctx.throw(400, '无效的联系方式或该联系方式已被占用')
+        }
+    }
+}

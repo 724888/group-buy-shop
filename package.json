@@ -1,0 +1,36 @@
+{
+  "name": "group-buy-shop",
+  "version": "1.0.0",
+  "description": "在线团购商城类项目后端代码。Powered By Koa2 based on NodeJs。技术栈：Koa+MongoDB。",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon build/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lurance",
+  "license": "ISC",
+  "dependencies": {
+    "@types/js-md5": "^0.4.2",
+    "@types/jsonwebtoken": "^7.2.5",
+    "@types/koa": "^2.0.43",
+    "@types/koa-bodyparser": "^4.2.0",
+    "@types/koa-json": "^2.0.18",
+    "@types/koa-jwt": "^3.3.0",
+    "@types/koa-router": "^7.0.27",
+    "@types/koa-static": "^4.0.0",
+    "@types/mongoose": "^5.0.0",
+    "@types/node-fetch": "^1.6.7",
+    "js-md5": "^0.7.3",
+    "jsonwebtoken": "^8.1.1",
+    "koa": "^2.4.1",
+    "koa-body": "^2.5.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-json": "^2.0.2",
+    "koa-jwt": "^3.3.0",
+    "koa-router": "^7.3.0",
+    "koa-static": "^4.0.2",
+    "mongoose": "^5.0.2",
+    "node-fetch": "^1.7.3",
+    "node-weixin-pay": "^0.5.1"
+  }
+}

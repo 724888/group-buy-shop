@@ -1,0 +1,7 @@
+.idea
+.idea/*
+config
+config/*
+node_modules/*
+niode_modules
+build/config/*
