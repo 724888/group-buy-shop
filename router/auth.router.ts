@@ -12,6 +12,8 @@ router.post('signup', AuthController.completeInformation);
 
 router.post('admin_login', AuthController.adminLogin);
 
-router.get('admin_user', AuthController.getAdminUser);
+router.get('admin_user', AuthController.adminGetAdminUser);
+
+router.get('admin_user/:id', AuthController.adminGetUser);
 
 export const authRouter = router;

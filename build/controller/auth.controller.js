@@ -71,10 +71,15 @@ class AuthController {
             };
         });
     }
-    static getAdminUser(ctx, next) {
+    static adminGetAdminUser(ctx, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield auth_service_1.AuthService.getUserFormHeaderToken(ctx);
             ctx.body = yield auth_service_1.AuthService.getAdminUser(user);
+        });
+    }
+    static adminGetUser(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            ctx.body = yield auth_service_1.AuthService.getUserFromId(ctx.params.id);
         });
     }
 }

@@ -90,13 +90,13 @@ class AuthService {
     }
     static adminGetuserFromHeaderToken(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
-            const payload = jsonwebtoken_1.verify(ctx.header.authorization.split(' ')[1], config_dev_1.settings.jwtsecret);
-            const user = yield AuthService.getUserFromId(payload['_id']);
-            if (user.usertype !== 1 && user.usertype !== 2) {
-                throw createHttpError(401);
+            try {
+                const payload = jsonwebtoken_1.verify(ctx.header.authorization.split(' ')[1], config_dev_1.settings.jwtsecret);
+                const user = yield AuthService.getUserFromId(payload['_id']);
+                return AuthService.checkIfAdminUser(user);
             }
-            else {
-                return user;
+            catch (err) {
+                throw createHttpError(401);
             }
         });
     }
@@ -107,6 +107,16 @@ class AuthService {
             }
             else {
                 return [user];
+            }
+        });
+    }
+    static checkIfAdminUser(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (user.usertype !== 1 && user.usertype !== 2) {
+                throw createHttpError(401);
+            }
+            else {
+                return user;
             }
         });
     }

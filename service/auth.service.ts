@@ -77,12 +77,12 @@ export class AuthService {
     }
 
     static async adminGetuserFromHeaderToken(ctx: Context): Promise<IUser> {
-        const payload = verify(ctx.header.authorization.split(' ')[1], settings.jwtsecret);
-        const user = await AuthService.getUserFromId(payload['_id']);
-        if (user.usertype !== 1 && user.usertype !== 2) {
+        try {
+            const payload = verify(ctx.header.authorization.split(' ')[1], settings.jwtsecret);
+            const user = await AuthService.getUserFromId(payload['_id']);
+            return AuthService.checkIfAdminUser(user);
+        } catch (err) {
             throw createHttpError(401)
-        } else {
-            return user
         }
     }
 
@@ -91,6 +91,14 @@ export class AuthService {
             return await User.find({usertype: {$in: [1,2]}}, {password: 0});
         } else {
             return [user]
+        }
+    }
+
+    static async checkIfAdminUser(user: IUser): Promise<IUser> {
+        if (user.usertype !==1 && user.usertype !== 2) {
+            throw createHttpError(401)
+        } else {
+            return user
         }
     }
 }

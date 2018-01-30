@@ -57,8 +57,12 @@ export class AuthController {
     }
 
 
-    static async getAdminUser(ctx, next) {
+    static async adminGetAdminUser(ctx, next) {
         const user = await AuthService.getUserFormHeaderToken(ctx);
         ctx.body = await AuthService.getAdminUser(user)
+    }
+
+    static async adminGetUser(ctx, next) {
+        ctx.body = await AuthService.getUserFromId(ctx.params.id)
     }
 }
