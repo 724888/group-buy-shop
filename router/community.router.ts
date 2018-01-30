@@ -6,4 +6,8 @@ const router = new Router();
 
 router.get('communities', CommunityController.getCommunities);
 
+
+
+router.get('admin_communities', CommunityController.adminGetCommunities);
+
 export const communityRouter = router;

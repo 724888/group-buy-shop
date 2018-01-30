@@ -59,6 +59,24 @@ class AuthController {
             }
         });
     }
+    static adminLogin(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { username, password } = ctx.request.body;
+            const u = yield auth_service_1.AuthService.authUser(username, password);
+            ctx.body = {
+                status: 1,
+                token: auth_service_1.AuthService.jwtSign(u),
+                usertype: u.usertype,
+                gen_time: new Date().getTime()
+            };
+        });
+    }
+    static getAdminUser(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield auth_service_1.AuthService.getUserFormHeaderToken(ctx);
+            ctx.body = yield auth_service_1.AuthService.getAdminUser(user);
+        });
+    }
 }
 exports.AuthController = AuthController;
 //# sourceMappingURL=auth.controller.js.map

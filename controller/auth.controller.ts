@@ -44,4 +44,21 @@ export class AuthController {
             ctx.throw(400, '无效的联系方式或该联系方式已被占用')
         }
     }
+
+    static async adminLogin(ctx, next) {
+        const {username, password} = ctx.request.body;
+        const u = await AuthService.authUser(username, password);
+        ctx.body = {
+            status: 1,
+            token: AuthService.jwtSign(u),
+            usertype: u.usertype,
+            gen_time: new Date().getTime()
+        }
+    }
+
+
+    static async getAdminUser(ctx, next) {
+        const user = await AuthService.getUserFormHeaderToken(ctx);
+        ctx.body = await AuthService.getAdminUser(user)
+    }
 }

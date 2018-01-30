@@ -1,1 +1,1 @@
-{"version":3,"file":"community.service.js","sourceRoot":"/Users/niangliang/WebstormProjects/group-buy-shop/","sources":["service/community.service.ts"],"names":[],"mappings":";;AAAA;CAEC;AAFD,4CAEC"}
+{"version":3,"file":"community.service.js","sourceRoot":"/Users/niangliang/WebstormProjects/group-buy-shop/","sources":["service/community.service.ts"],"names":[],"mappings":";;;;;;;;;;AAAA,8DAA+D;AAE/D;IACI,MAAM,CAAO,cAAc;;YACvB,MAAM,CAAC,MAAM,2BAAS,CAAC,IAAI,EAAE,CAAC;QAClC,CAAC;KAAA;CACJ;AAJD,4CAIC"}

@@ -33,7 +33,7 @@ app.use(
         .unless({
             path: [
                 /^\/api\/login/,
-                /^\/api\/adminlogin/,
+                /^\/api\/admin_login/,
                 /^\/api\/code/,
                 /^\/api\/adminsignup/,
                 /^\/api\/order\/notify/

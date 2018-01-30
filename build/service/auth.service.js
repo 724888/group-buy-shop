@@ -12,6 +12,8 @@ const node_fetch_1 = require("node-fetch");
 const config_dev_1 = require("../config/config.dev");
 const user_model_1 = require("../model/user.model");
 const jsonwebtoken_1 = require("jsonwebtoken");
+const md5 = require("js-md5");
+const createHttpError = require("http-errors");
 class AuthService {
     static getUserOpenid(code) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -27,11 +29,16 @@ class AuthService {
     }
     static getUserFromOpenId(openid) {
         return __awaiter(this, void 0, void 0, function* () {
+            return yield user_model_1.User.findOne({ openid: openid }, { password: 0 });
+        });
+    }
+    static getUserFromId(id) {
+        return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield user_model_1.User.findOne({ openid: openid });
+                return yield user_model_1.User.findOne({ _id: id }, { password: 0 });
             }
-            catch (_a) {
-                return null;
+            catch (err) {
+                throw createHttpError(401);
             }
         });
     }
@@ -42,18 +49,13 @@ class AuthService {
     }
     static saveUser(openid, usertype, username, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const u = new user_model_1.User({
-                    openid: openid,
-                    usertype: usertype,
-                    username: username,
-                    password: password
-                });
-                return yield u.save();
-            }
-            catch (err) {
-                console.log(err);
-            }
+            const u = new user_model_1.User({
+                openid: openid,
+                usertype: usertype,
+                username: username,
+                password: password
+            });
+            return yield u.save();
         });
     }
     static checkUsernameIfRepeat(username) {
@@ -67,6 +69,45 @@ class AuthService {
             return yield user_model_1.User.findOneAndUpdate({ _id: _id }, { username: username, usertype: usertype }, {
                 new: true
             });
+        });
+    }
+    static authUser(username, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const u = yield user_model_1.User.findOne({ username: username, password: md5(password), usertype: { $in: [1, 2] } });
+            if (u) {
+                return u;
+            }
+            else {
+                throw createHttpError(401);
+            }
+        });
+    }
+    static getUserFormHeaderToken(ctx) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const payload = jsonwebtoken_1.verify(ctx.header.authorization.split(' ')[1], config_dev_1.settings.jwtsecret);
+            return yield AuthService.getUserFromId(payload['_id']);
+        });
+    }
+    static adminGetuserFromHeaderToken(ctx) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const payload = jsonwebtoken_1.verify(ctx.header.authorization.split(' ')[1], config_dev_1.settings.jwtsecret);
+            const user = yield AuthService.getUserFromId(payload['_id']);
+            if (user.usertype !== 1 && user.usertype !== 2) {
+                throw createHttpError(401);
+            }
+            else {
+                return user;
+            }
+        });
+    }
+    static getAdminUser(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (user.usertype === 1) {
+                return yield user_model_1.User.find({ usertype: { $in: [1, 2] } }, { password: 0 });
+            }
+            else {
+                return [user];
+            }
         });
     }
 }

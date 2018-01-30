@@ -17,7 +17,8 @@ function unauth(ctx, next) {
                 ctx.body = {
                     status: 0,
                     errcode: 1000,
-                    errmsg: '认证失败，请重新认证获取token'
+                    errmsg: '认证失败，请重新认证获取token',
+                    url: ctx.url
                 };
             }
             else {
