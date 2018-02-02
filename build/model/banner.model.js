@@ -17,10 +17,6 @@ const bannerSchema = new Schema({
         default: Date.now,
         required: true
     },
-    is_activate: {
-        type: Boolean,
-        default: true
-    },
 });
 exports.Banner = mongoose.model('Banner', bannerSchema);
 //# sourceMappingURL=banner.model.js.map

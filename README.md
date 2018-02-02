@@ -27,6 +27,11 @@ Group-Buy-Shop
 模型层Model对应着本项目的model文件夹，包含了本项目的依赖模型，ORM用
 
 
+前端项目
+--------
+[后台管理系统](https://github.com/Lurance/group-buy-shop-ms)
+
+
 
 
 

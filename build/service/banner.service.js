@@ -11,10 +11,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const banner_model_1 = require("../model/banner.model");
 const community_model_1 = require("../model/community.model");
 const createHttpError = require("http-errors");
+const path = require("path");
+const config_dev_1 = require("../config/config.dev");
+const fs = require("fs");
 class BannerService {
-    static getBanners() {
+    static getBanners(condition) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield banner_model_1.Banner.find();
+            return yield banner_model_1.Banner.find(condition);
         });
     }
     static getBannerFromCommunityId(communityId) {
@@ -25,6 +28,35 @@ class BannerService {
             }
             catch (err) {
                 throw createHttpError(400, '无效的社区id');
+            }
+        });
+    }
+    static createFileName(suffix) {
+        return `${Date.now()}${Math.floor(Math.random() * 10000)}.${suffix}`;
+    }
+    static saveBanner(fileObj, type, communityId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const uploadPath = path.resolve() + '/static/';
+            const fileName = BannerService.createFileName(fileObj.name.split('.')[1]);
+            const filePath = path.join(uploadPath + config_dev_1.settings.bannerPath + '/', fileName);
+            const reader = fs.createReadStream(fileObj.path);
+            const writer = fs.createWriteStream(filePath);
+            reader.pipe(writer);
+            if (type == 1) {
+                const banner = new banner_model_1.Banner({
+                    url: `${config_dev_1.settings.bannerPath}/${fileName}`,
+                    type: 1
+                });
+                return yield banner.save();
+            }
+            else {
+                const banner = new banner_model_1.Banner({
+                    url: `${config_dev_1.settings.bannerPath}/${fileName}`,
+                    type: 2
+                });
+                yield banner.save();
+                yield community_model_1.Community.update({ _id: communityId }, { $push: { bannerIds: banner._id } });
+                return banner;
             }
         });
     }

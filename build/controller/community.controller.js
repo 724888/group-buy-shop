@@ -54,6 +54,25 @@ class CommunityController {
             ctx.body = yield community_service_1.CommunityService.saveCommunity(ctx.state.user, name, userId, ad_text);
         });
     }
+    static adminupdateCommunity(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { name, userId, ad_text } = ctx.request.body;
+            ctx.body = yield community_service_1.CommunityService.updateCommunity(ctx.state.user, ctx.params.id, name, userId, ad_text);
+        });
+    }
+    static adminDeleteCommunity(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (auth_service_1.AuthService.checkIfAdminUser(ctx.state.user)) {
+                const res = yield community_service_1.CommunityService.deleteCommunity(ctx.params.id);
+                if (res) {
+                    ctx.status = 204;
+                }
+                else {
+                    throw createHttpError(400, '删除该社区失败');
+                }
+            }
+        });
+    }
 }
 exports.CommunityController = CommunityController;
 //# sourceMappingURL=community.controller.js.map

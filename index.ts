@@ -4,8 +4,6 @@ import {settings} from "./config/config.dev";
 
 import {unauth} from "./middleware/unauth";
 
-import * as staticServe from "koa-static";
-
 import * as jwt from "koa-jwt";
 
 import * as koaBody from "koa-body";
@@ -18,6 +16,8 @@ import {mainRouter} from "./router";
 
 import {badrequest} from "./middleware/bad";
 
+import * as serve from "koa-static";
+
 const app = new Koa;
 
 app.use(json());
@@ -26,7 +26,7 @@ app.use(unauth);
 
 app.use(badrequest);
 
-app.use(staticServe(__dirname + '/static'));
+app.use(serve(__dirname + './../static'));
 
 app.use(
     jwt({secret: settings.jwtsecret})

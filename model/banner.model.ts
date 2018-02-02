@@ -11,7 +11,6 @@ export interface IBanner extends M.Document {
     url: string;
     type: number;
     upload_date: string;
-    is_activate: boolean;
 }
 
 const bannerSchema = new Schema({
@@ -27,10 +26,6 @@ const bannerSchema = new Schema({
         type: Date,
         default: Date.now,
         required: true
-    },
-    is_activate: {
-        type: Boolean,
-        default: true
     },
 });
 

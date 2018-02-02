@@ -9,7 +9,8 @@ const Schema = mongoose.Schema;
 export interface ICategory extends M.Document {
     _id: string;
     name: string;
-    childCategory: Array<ICategory>;
+    type: number;
+    parentCategory: string;
 }
 
 const categorySchema = new Schema({
@@ -17,7 +18,8 @@ const categorySchema = new Schema({
         type: String,
         required: true
     },
-    childCategory: [Schema.Types.Mixed]
+    type: Number,
+    parentCategory: Schema.Types.ObjectId
 });
 
 export const Category = mongoose.model<ICategory>('Category', categorySchema);

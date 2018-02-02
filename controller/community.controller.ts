@@ -39,4 +39,20 @@ export class CommunityController {
         const ad_text = ctx.request.body.ad_text;
         ctx.body = await CommunityService.saveCommunity(ctx.state.user, name, userId, ad_text)
     }
+
+    static async adminupdateCommunity(ctx, next) {
+        const {name, userId, ad_text} = ctx.request.body;
+        ctx.body = await CommunityService.updateCommunity(ctx.state.user, ctx.params.id, name, userId, ad_text);
+    }
+
+    static async adminDeleteCommunity(ctx, next) {
+        if (AuthService.checkIfAdminUser(ctx.state.user)) {
+            const res = await CommunityService.deleteCommunity(ctx.params.id);
+            if (res) {
+                ctx.status = 204
+            } else {
+                throw createHttpError(400, '删除该社区失败')
+            }
+        }
+    }
 }

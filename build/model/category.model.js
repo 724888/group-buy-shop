@@ -8,7 +8,8 @@ const categorySchema = new Schema({
         type: String,
         required: true
     },
-    childCategory: [Schema.Types.Mixed]
+    type: Number,
+    parentCategory: Schema.Types.ObjectId
 });
 exports.Category = mongoose.model('Category', categorySchema);
 //# sourceMappingURL=category.model.js.map

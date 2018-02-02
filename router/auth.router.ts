@@ -9,6 +9,7 @@ router.post('code', AuthController.getOpenid);
 router.post('signup', AuthController.completeInformation);
 
 
+// For Administrators
 
 router.post('admin_login', AuthController.adminLogin);
 
