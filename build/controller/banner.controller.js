@@ -26,7 +26,7 @@ class BannerController {
         return __awaiter(this, void 0, void 0, function* () {
             if (auth_service_1.AuthService.checkIfAdminUser(ctx.state.user)) {
                 const { type, communityId } = ctx.request.body.fields;
-                if (type == 1) {
+                if (type == 1 || type == 3) {
                     ctx.body = yield banner_service_1.BannerService.saveBanner(ctx.request.body.files.file, type);
                 }
                 else if (type == 2) {
@@ -41,6 +41,19 @@ class BannerController {
     static adminGetBannersFromCommunity(ctx, next) {
         return __awaiter(this, void 0, void 0, function* () {
             ctx.body = yield banner_service_1.BannerService.getBannerFromCommunityId(ctx.params.id);
+        });
+    }
+    static adminDeleteBanner(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (auth_service_1.AuthService.checkIfAdminUser(ctx.state.user)) {
+                const res = yield banner_service_1.BannerService.deleteBannerFromId(ctx.params.id);
+                if (res) {
+                    ctx.status = 204;
+                }
+                else {
+                    throw createHttpError(400, '删除轮播图失败');
+                }
+            }
         });
     }
 }

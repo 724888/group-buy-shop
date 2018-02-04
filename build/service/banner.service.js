@@ -42,10 +42,10 @@ class BannerService {
             const reader = fs.createReadStream(fileObj.path);
             const writer = fs.createWriteStream(filePath);
             reader.pipe(writer);
-            if (type == 1) {
+            if (type == 1 || type == 3) {
                 const banner = new banner_model_1.Banner({
                     url: `${config_dev_1.settings.bannerPath}/${fileName}`,
-                    type: 1
+                    type: type
                 });
                 return yield banner.save();
             }
@@ -57,6 +57,17 @@ class BannerService {
                 yield banner.save();
                 yield community_model_1.Community.update({ _id: communityId }, { $push: { bannerIds: banner._id } });
                 return banner;
+            }
+        });
+    }
+    static deleteBannerFromId(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield banner_model_1.Banner.remove({ _id: id });
+                return true;
+            }
+            catch (err) {
+                return false;
             }
         });
     }

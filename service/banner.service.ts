@@ -35,10 +35,10 @@ export class BannerService {
         const reader = fs.createReadStream(fileObj.path);
         const writer = fs.createWriteStream(filePath);
         reader.pipe(writer);
-        if (type == 1) {
+        if (type == 1 || type == 3) {
             const banner = new Banner({
                 url: `${settings.bannerPath}/${fileName}`,
-                type: 1
+                type: type
             });
             return await banner.save()
         } else {
@@ -49,6 +49,15 @@ export class BannerService {
             await banner.save();
             await Community.update({_id: communityId}, {$push: {bannerIds: banner._id}});
             return banner
+        }
+    }
+
+    static async deleteBannerFromId(id: string): Promise<boolean> {
+        try {
+            await Banner.remove({_id: id});
+            return true;
+        } catch (err) {
+            return false
         }
     }
 }
