@@ -14,6 +14,7 @@ const createHttpError = require("http-errors");
 const path = require("path");
 const config_dev_1 = require("../config/config.dev");
 const fs = require("fs");
+const commodity_model_1 = require("../model/commodity.model");
 class BannerService {
     static getBanners(condition) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -63,8 +64,18 @@ class BannerService {
     static deleteBannerFromId(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield banner_model_1.Banner.remove({ _id: id });
-                return true;
+                const b = yield banner_model_1.Banner.findOneAndRemove({ _id: id });
+                if (b.type === 1) {
+                    return true;
+                }
+                else if (b.type === 2) {
+                    yield community_model_1.Community.update({ bannerIds: b._id }, { $pull: { bannerIds: b._id } });
+                    return true;
+                }
+                else if (b.type === 3) {
+                    yield commodity_model_1.Commodity.update({ bannerIds: b._id }, { $pull: { bannerIds: b._id } });
+                    return true;
+                }
             }
             catch (err) {
                 return false;

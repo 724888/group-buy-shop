@@ -1,13 +1,10 @@
 import * as Router from "koa-router";
 
 import {BannerController} from "../controller/banner.controller";
-import {Banner} from "../model/banner.model";
 
 const router = new Router();
 
-router.get('banners', BannerController.getIndexBanner);
-
-router.get('banners/communities/:id', BannerController.getBannerForCommunity);
+router.get('banners', BannerController.getIndexBanner); // 取得首页的轮播图
 
 
 // For Administrators

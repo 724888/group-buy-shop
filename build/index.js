@@ -10,6 +10,7 @@ const json = require("koa-json");
 const router_1 = require("./router");
 const bad_1 = require("./middleware/bad");
 const serve = require("koa-static");
+const admin_auth_1 = require("./middleware/admin_auth");
 const app = new Koa;
 app.use(json());
 app.use(unauth_1.unauth);
@@ -28,6 +29,7 @@ app.use(jwt({ secret: config_dev_1.settings.jwtsecret })
 }));
 app.use(koaBody({ multipart: true }));
 app.use(bodyParser());
+app.use(admin_auth_1.admin_auth);
 app.use(router_1.mainRouter.routes()).use(router_1.mainRouter.allowedMethods());
 app.listen(config_dev_1.settings.port);
 //# sourceMappingURL=index.js.map

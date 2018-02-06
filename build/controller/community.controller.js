@@ -14,7 +14,12 @@ const createHttpError = require("http-errors");
 class CommunityController {
     static getCommunities(ctx, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            ctx.body = yield community_service_1.CommunityService.getCommunities();
+            ctx.body = yield community_service_1.CommunityService.getCommunities(true);
+        });
+    }
+    static getCommunity(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            ctx.body = yield community_service_1.CommunityService.getCommunityFromId(ctx.params.id, true);
         });
     }
     static adminGetCommunities(ctx, next) {
@@ -48,16 +53,14 @@ class CommunityController {
     }
     static adminCreateCommunity(ctx, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const name = ctx.request.body.name;
-            const userId = ctx.request.body.userId;
-            const ad_text = ctx.request.body.ad_text;
-            ctx.body = yield community_service_1.CommunityService.saveCommunity(ctx.state.user, name, userId, ad_text);
+            const { name, userId, ad_text, pick_address, pick_time } = ctx.request.body;
+            ctx.body = yield community_service_1.CommunityService.saveCommunity(ctx.state.user, name, userId, ad_text, pick_time, pick_address);
         });
     }
-    static adminupdateCommunity(ctx, next) {
+    static adminUpdateCommunity(ctx, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { name, userId, ad_text } = ctx.request.body;
-            ctx.body = yield community_service_1.CommunityService.updateCommunity(ctx.state.user, ctx.params.id, name, userId, ad_text);
+            const { name, userId, ad_text, pick_time, pick_address } = ctx.request.body;
+            ctx.body = yield community_service_1.CommunityService.updateCommunity(ctx.state.user, ctx.params.id, name, userId, ad_text, pick_time, pick_address);
         });
     }
     static adminDeleteCommunity(ctx, next) {

@@ -13,8 +13,16 @@ const communitySchema = new Schema({
         required: true
     },
     ad_text: String,
-    categoryIds: [Schema.Types.ObjectId],
-    bannerIds: [Schema.Types.ObjectId]
+    pick_time: String,
+    pick_address: String,
+    categoryIds: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Category'
+        }],
+    bannerIds: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Banner'
+        }]
 });
 exports.Community = mongoose.model('Community', communitySchema);
 //# sourceMappingURL=community.model.js.map

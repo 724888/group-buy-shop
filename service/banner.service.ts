@@ -9,6 +9,7 @@ import * as path from "path";
 import {settings} from "../config/config.dev";
 
 import * as fs from "fs";
+import {Commodity} from "../model/commodity.model";
 
 export class BannerService {
     static async getBanners(condition: object): Promise<Array<IBanner>> {
@@ -54,8 +55,16 @@ export class BannerService {
 
     static async deleteBannerFromId(id: string): Promise<boolean> {
         try {
-            await Banner.remove({_id: id});
-            return true;
+            const b = await Banner.findOneAndRemove({_id: id});
+            if (b.type === 1) {
+                return true;
+            } else if (b.type === 2) {
+                await Community.update({bannerIds: b._id}, {$pull: {bannerIds: b._id}});
+                return true;
+            } else if (b.type === 3) {
+                await Commodity.update({bannerIds: b._id}, {$pull: {bannerIds: b._id}});
+                return true;
+            }
         } catch (err) {
             return false
         }

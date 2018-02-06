@@ -12,6 +12,8 @@ import {commodityRouter} from "./commodity.router";
 
 import {utilsRouter} from "./utils.router";
 
+import {groupRouter} from "./group.router";
+
 const router = new Router();
 
 router.use('/api/', authRouter.routes());
@@ -25,5 +27,7 @@ router.use('/api/', categoryRouter.routes());
 router.use('/api/', commodityRouter.routes());
 
 router.use('/api/', utilsRouter.routes());
+
+router.use('/api/', groupRouter.routes());
 
 export const mainRouter = router;

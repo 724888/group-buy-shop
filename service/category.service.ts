@@ -7,6 +7,7 @@ import {IUser} from "../model/user.model";
 import {AuthService} from "./auth.service";
 
 import * as createHttpError from "http-errors";
+import {Commodity} from "../model/commodity.model";
 
 export class CategoryService {
     static async getCategories(): Promise<Array<ICategory>> {
@@ -60,9 +61,14 @@ export class CategoryService {
         try {
             const category = await Category.findOneAndRemove({_id: id});
             if (category.type === 1) {
-                await Category.remove({parentCategory: category._id});
+                await Commodity.remove({categoryId: category._id});
+                const child = await Category.find({parentCategory: category._id});
+                child.forEach(async(c) => {
+                    await Commodity.remove({categoryId: c._id})
+                });
                 return true
             } else {
+                await Commodity.remove({categoryId: category._id});
                 return true
             }
         } catch (err) {

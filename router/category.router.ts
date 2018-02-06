@@ -4,7 +4,6 @@ import {CategoryController} from "../controller/category.controller";
 
 const router = new Router();
 
-
 // For Administrators
 
 router.post('admin_categories', CategoryController.adminCreateCategory);

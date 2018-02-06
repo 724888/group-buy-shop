@@ -12,6 +12,7 @@ const category_model_1 = require("../model/category.model");
 const community_model_1 = require("../model/community.model");
 const auth_service_1 = require("./auth.service");
 const createHttpError = require("http-errors");
+const commodity_model_1 = require("../model/commodity.model");
 class CategoryService {
     static getCategories() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -73,10 +74,15 @@ class CategoryService {
             try {
                 const category = yield category_model_1.Category.findOneAndRemove({ _id: id });
                 if (category.type === 1) {
-                    yield category_model_1.Category.remove({ parentCategory: category._id });
+                    yield commodity_model_1.Commodity.remove({ categoryId: category._id });
+                    const child = yield category_model_1.Category.find({ parentCategory: category._id });
+                    child.forEach((c) => __awaiter(this, void 0, void 0, function* () {
+                        yield commodity_model_1.Commodity.remove({ categoryId: c._id });
+                    }));
                     return true;
                 }
                 else {
+                    yield commodity_model_1.Commodity.remove({ categoryId: category._id });
                     return true;
                 }
             }

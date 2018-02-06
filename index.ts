@@ -18,6 +18,8 @@ import {badrequest} from "./middleware/bad";
 
 import * as serve from "koa-static";
 
+import {admin_auth} from "./middleware/admin_auth";
+
 const app = new Koa;
 
 app.use(json());
@@ -45,6 +47,8 @@ app.use(
 app.use(koaBody({multipart: true}));
 
 app.use(bodyParser());
+
+app.use(admin_auth);
 
 app.use(mainRouter.routes()).use(mainRouter.allowedMethods());
 

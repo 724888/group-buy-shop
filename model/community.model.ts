@@ -11,6 +11,8 @@ export interface ICommunity extends M.Document {
     name: string;
     userId: string;
     ad_text: string;
+    pick_time: string;
+    pick_address: string;
     categoryIds: Array<string>;
     bannerIds: Array<string>;
 }
@@ -25,8 +27,16 @@ const communitySchema = new Schema({
         required: true
     },
     ad_text: String,
-    categoryIds: [Schema.Types.ObjectId],
-    bannerIds: [Schema.Types.ObjectId]
+    pick_time: String,
+    pick_address: String,
+    categoryIds: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Category'
+    }],
+    bannerIds: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Banner'
+    }]
 });
 
 export const Community = mongoose.model<ICommunity>('Community', communitySchema);

@@ -8,14 +8,19 @@ const commoditySchema = new Schema({
         type: String,
         required: true
     },
-    bannerIds: [Schema.Types.ObjectId],
+    bannerIds: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Banner'
+        }],
     communityId: {
         type: Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'Community'
     },
     categoryId: {
         type: Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'Category'
     },
     price: Number,
     specs: [String],
@@ -26,7 +31,10 @@ const commoditySchema = new Schema({
         type: Number,
         default: 0
     },
-    groupId: Schema.Types.ObjectId,
+    groupId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Group'
+    },
     is_hot: {
         type: Boolean,
         default: false
@@ -47,13 +55,14 @@ const commoditySchema = new Schema({
     }
 });
 commoditySchema.pre('save', function (next) {
-    if (this.isNew) {
-        this.meta.createdAt = this.meta.updatedAt = Date.now();
-    }
-    else {
-        this.meta.updatedAt = Date.now();
-    }
+    this.meta.createdAt = this.meta.updatedAt = Date.now();
     next();
+});
+commoditySchema.pre('findOneAndUpdate', function () {
+    this.update({ "meta.updatedAt": Date.now() });
+});
+commoditySchema.pre('update', function () {
+    this.update({ "meta.updatedAt": Date.now() });
 });
 exports.Commodity = mongoose.model('Commodity', commoditySchema);
 //# sourceMappingURL=commodity.model.js.map

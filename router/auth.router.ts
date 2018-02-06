@@ -11,7 +11,7 @@ router.post('signup', AuthController.completeInformation);
 
 // For Administrators
 
-router.post('admin_login', AuthController.adminLogin);
+router.post('login', AuthController.adminLogin);
 
 router.get('admin_user', AuthController.adminGetAdminUser);
 
