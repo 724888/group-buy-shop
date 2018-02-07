@@ -13,7 +13,7 @@ function admin_auth(ctx, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (ctx.request.url.indexOf('admin_') >= 0) {
             if (ctx.request.method === 'GET') {
-                ctx.state.user = auth_service_1.AuthService.adminGetuserFromHeaderToken(ctx);
+                ctx.state.user = yield auth_service_1.AuthService.adminGetuserFromHeaderToken(ctx);
             }
             else {
                 yield auth_service_1.AuthService.checkIfAdminUser(ctx.state.user);

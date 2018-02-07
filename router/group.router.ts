@@ -9,4 +9,8 @@ const router = new Router();
 
 router.post('admin_groups', GroupController.adminCreateGroup);
 
+router.get('admin_groups/communities/:id', GroupController.adminGetGroupFromCommunity);
+
+router.patch('admin_groups/:id', GroupController.adminUpdateGroup);
+
 export const groupRouter = router;

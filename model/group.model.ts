@@ -23,7 +23,8 @@ export interface IGroup extends M.Document {
 const groupSchema = new Schema({
     commodityId: {
         type: Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'Commodity'
     },
     communityId: {
         type: Schema.Types.ObjectId,
@@ -61,10 +62,8 @@ const groupSchema = new Schema({
     }
 });
 
-groupSchema.pre('save', async function (next) {
+groupSchema.pre('save', function (next) {
     this.meta.createdAt = this.meta.updatedAt = Date.now();
-    const c = await Commodity.findOneAndUpdate({_id: this.commodityId}, {status: 1, groupId: this._id}, {new: true});
-    this.communityId = c.communityId;
     next();
 });
 
