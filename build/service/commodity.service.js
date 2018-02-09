@@ -29,6 +29,12 @@ class CommodityService {
             return yield c.save();
         });
     }
+    static getCommodityFromId(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield commodity_model_1.Commodity.findOne({ _id: id })
+                .populate('communityId categoryId groupId');
+        });
+    }
     static updateCommodity(id, name, bannerIds, communityId, categoryId, price, stock, specs, content, is_hot, is_commend) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield commodity_model_1.Commodity.findOneAndUpdate({ _id: id }, {

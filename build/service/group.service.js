@@ -11,6 +11,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const group_model_1 = require("../model/group.model");
 const commodity_model_1 = require("../model/commodity.model");
 const node_schedule_1 = require("node-schedule");
+const order_model_1 = require("../model/order.model");
+const community_service_1 = require("./community.service");
 class GroupService {
     static saveGroup(communityId, commodityId, group_price, group_goal, group_attach, group_time) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -41,21 +43,66 @@ class GroupService {
                     yield g.update({ status: 2 });
                     yield commodity_model_1.Commodity.update({ _id: g.commodityId }, { status: 0, $unset: { groupId: '' } });
                 }
-                else {
-                    yield g.update({ status: 1 });
-                }
             });
         }.bind(null, groupId));
     }
     static patchGroup(id, group_price, group_goal, group_attach, group_time) {
         return __awaiter(this, void 0, void 0, function* () {
             GroupService.createTimeoutCheckJob(id, group_time);
-            return yield group_model_1.Group.findOneAndUpdate({ _id: id }, {
-                group_price: group_price,
-                group_goal: group_goal,
-                group_attach: group_attach,
-                group_time: group_time
-            }, { new: true });
+            if (group_time > new Date().getTime() && group_attach < group_goal) {
+                const g = yield group_model_1.Group.findOneAndUpdate({ _id: id }, {
+                    group_price: group_price,
+                    group_goal: group_goal,
+                    group_attach: group_attach,
+                    group_time: group_time,
+                    status: 0
+                }, { new: true });
+                yield commodity_model_1.Commodity.update({ _id: g.commodityId }, { groupId: g._id, status: 1 });
+                return g;
+            }
+            else {
+                return yield group_model_1.Group.findOneAndUpdate({ _id: id }, {
+                    group_price: group_price,
+                    group_goal: group_goal,
+                    group_attach: group_attach,
+                    group_time: group_time
+                }, { new: true });
+            }
+        });
+    }
+    static payAndCheckGroupIfSuccess(groupId, quantity) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const group = yield group_model_1.Group.findOne({ _id: groupId })
+                .populate('commodityId');
+            if (group.status !== 0 || group.group_attach + quantity > group.group_goal || Date.now() > new Date(group.group_time).getTime()) {
+                return { status: -1, group: group };
+            }
+            if (group.group_attach + quantity === group.group_goal) {
+                yield group.update({ group_attach: group.group_goal, status: 1 });
+                return { status: 1, group: group };
+            }
+            else {
+                yield group.update({ group_attach: group.group_attach + quantity });
+                return { status: 0, group: group };
+            }
+        });
+    }
+    static genPickCode(length) {
+        let codes = [];
+        for (let i = 0; i < length; i++) {
+            const pick_code = String(Math.floor(Math.random() * 100000));
+            codes.push(pick_code);
+        }
+        return codes;
+    }
+    static groupSuccess(group) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const orders = yield order_model_1.Order.find({ groupId: group._id });
+            const community = yield community_service_1.CommunityService.getCommunityFromId(group.commodityId.communityId);
+            const pick_codes = GroupService.genPickCode(orders.length);
+            for (let i in orders) {
+                yield orders[i].update({ pick_code: pick_codes[i], status: 2, pick_address: community.pick_address, pick_time: community.pick_time });
+            }
         });
     }
 }

@@ -3,6 +3,17 @@ import * as fs from "fs";
 import * as path from "path";
 
 export class UtilsService {
+    static genRandomString(len, extString = '') {
+        len = len || 32;
+        let $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+        let maxPos = $chars.length;
+        let pwd = '';
+        for (let i = 0; i < len; i++) {
+            pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+        }
+        return pwd + extString;
+    }
+
     static createFileName(suffix) {
         return `${Date.now()}${Math.floor(Math.random() * 10000)}.${suffix}`
     }

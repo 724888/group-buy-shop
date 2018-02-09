@@ -1,6 +1,7 @@
 import {settings} from "../config/config.dev";
 
 import * as M from 'mongoose';
+import {IGroup} from "./group.model";
 
 const mongoose = settings.mongoose;
 
@@ -17,7 +18,7 @@ export interface ICommodity extends M.Document {
     content: string;
     parameter: any;
     status: number;
-    groupId: string;
+    groupId: string | IGroup;
     is_hot: boolean;
     is_commend: boolean;
     meta: { createdAt: string, updatedAt: string };

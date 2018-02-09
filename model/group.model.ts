@@ -2,7 +2,7 @@ import {settings} from '../config/config.dev';
 
 import * as M from 'mongoose';
 
-import {Commodity, ICommodity} from "./commodity.model";
+import {ICommodity} from "./commodity.model";
 
 const mongoose = settings.mongoose;
 
@@ -49,6 +49,11 @@ const groupSchema = new Schema({
     status: {
         type: Number,
         default: 0
+        /*
+        status：0表示拼团进行中
+                1表示拼团达成
+                2表示拼团失败
+         */
     },
     meta: {
         createdAt: {

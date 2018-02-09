@@ -8,6 +8,7 @@ const category_router_1 = require("./category.router");
 const commodity_router_1 = require("./commodity.router");
 const utils_router_1 = require("./utils.router");
 const group_router_1 = require("./group.router");
+const order_router_1 = require("./order.router");
 const router = new Router();
 router.use('/api/', auth_router_1.authRouter.routes());
 router.use('/api/', banner_router_1.bannerRouter.routes());
@@ -16,5 +17,6 @@ router.use('/api/', category_router_1.categoryRouter.routes());
 router.use('/api/', commodity_router_1.commodityRouter.routes());
 router.use('/api/', utils_router_1.utilsRouter.routes());
 router.use('/api/', group_router_1.groupRouter.routes());
+router.use('/api/', order_router_1.orderRouter.routes());
 exports.mainRouter = router;
 //# sourceMappingURL=index.js.map

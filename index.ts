@@ -38,7 +38,7 @@ app.use(
                 /^\/api\/admin_login/,
                 /^\/api\/code/,
                 /^\/api\/adminsignup/,
-                /^\/api\/order\/notify/
+                /^\/api\/orders\/notify/
             ],
             method: 'GET'
         })

@@ -23,7 +23,7 @@ app.use(jwt({ secret: config_dev_1.settings.jwtsecret })
         /^\/api\/admin_login/,
         /^\/api\/code/,
         /^\/api\/adminsignup/,
-        /^\/api\/order\/notify/
+        /^\/api\/orders\/notify/
     ],
     method: 'GET'
 }));

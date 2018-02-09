@@ -23,6 +23,11 @@ export class CommodityService {
         return await c.save()
     }
 
+    static async getCommodityFromId(id: string): Promise<ICommodity> {
+        return await Commodity.findOne({_id: id})
+            .populate('communityId categoryId groupId')
+    }
+
     static async updateCommodity(id: string, name: string, bannerIds: string[], communityId: string,
                                  categoryId: string, price: number, stock: number,
                                  specs: string[], content: string, is_hot: boolean, is_commend: boolean): Promise<ICommodity> {

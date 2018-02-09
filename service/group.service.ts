@@ -1,8 +1,12 @@
 import {IGroup, Group} from "../model/group.model";
 
-import {Commodity} from "../model/commodity.model";
+import {Commodity, ICommodity} from "../model/commodity.model";
 
 import {scheduleJob} from "node-schedule";
+
+import {Order} from "../model/order.model";
+
+import {CommunityService} from "./community.service";
 
 export class GroupService {
     static async saveGroup(communityId: string, commodityId: string, group_price: number,
@@ -31,20 +35,63 @@ export class GroupService {
             if (g.group_attach < g.group_goal) {
                 await g.update({status: 2});
                 await Commodity.update({_id: g.commodityId}, {status: 0, $unset: {groupId: ''}})
-            } else {
-                await g.update({status: 1});
-                // await Commodity.update({_id: g.commodityId}, {status: 0, $unset: {groupId: ''}})
             }
         }.bind(null, groupId));
     }
 
     static async patchGroup(id: string, group_price: number, group_goal: number, group_attach: number, group_time: number): Promise<IGroup> {
         GroupService.createTimeoutCheckJob(id, group_time);
-        return await Group.findOneAndUpdate({_id: id}, {
-            group_price: group_price,
-            group_goal: group_goal,
-            group_attach: group_attach,
-            group_time: group_time
-        }, {new: true});
+        if (group_time > new Date().getTime() && group_attach < group_goal) {
+            const g = await Group.findOneAndUpdate({_id: id}, {
+                group_price: group_price,
+                group_goal: group_goal,
+                group_attach: group_attach,
+                group_time: group_time,
+                status: 0
+            }, {new: true});
+            await Commodity.update({_id: g.commodityId}, {groupId: g._id, status: 1});
+            return g
+        } else {
+            return await Group.findOneAndUpdate({_id: id}, {
+                group_price: group_price,
+                group_goal: group_goal,
+                group_attach: group_attach,
+                group_time: group_time
+            }, {new: true});
+        }
+    }
+
+    static async payAndCheckGroupIfSuccess(groupId: string, quantity: number): Promise<any> {
+        const group = await Group.findOne({_id: groupId})
+            .populate('commodityId');
+        if (group.status !== 0 || group.group_attach + quantity > group.group_goal || Date.now() > new Date(group.group_time).getTime()) {
+            return {status: -1, group: group}
+        }
+        if (group.group_attach + quantity === group.group_goal) {
+            await group.update({group_attach: group.group_goal, status: 1});
+            return {status: 1, group: group}
+        } else {
+            await group.update({group_attach: group.group_attach + quantity});
+            return {status: 0, group: group};
+        }
+    }
+
+    static genPickCode(length): Array<string> {
+        let codes = [];
+        for (let i =0; i < length; i++) {
+            const pick_code = String(Math.floor(Math.random() * 100000));
+            codes.push(pick_code)
+        }
+        return codes
+    }
+
+    static async groupSuccess(group: IGroup) {
+        // TODO
+        const orders = await Order.find({groupId: group._id});
+        const community = await CommunityService.getCommunityFromId((group.commodityId as ICommodity).communityId);
+        const pick_codes = GroupService.genPickCode(orders.length);
+        for (let i in orders) {
+            await orders[i].update({pick_code: pick_codes[i], status: 2, pick_address: community.pick_address, pick_time: community.pick_time});
+        }
     }
 }
