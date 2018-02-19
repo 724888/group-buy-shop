@@ -4,7 +4,7 @@ import {Commodity, ICommodity} from "../model/commodity.model";
 
 import {scheduleJob} from "node-schedule";
 
-import {Order} from "../model/order.model";
+import {IOrder, Order} from "../model/order.model";
 
 import {CommunityService} from "./community.service";
 
@@ -27,6 +27,7 @@ export class GroupService {
     static async getGroupFromCommunityId(id: string): Promise<Array<IGroup>> {
         return await Group.find({communityId: id})
             .populate('commodityId')
+            .sort({'meta.createdAt': -1})
     }
 
     static createTimeoutCheckJob(groupId: string, group_time: number) {
@@ -61,18 +62,24 @@ export class GroupService {
         }
     }
 
-    static async payAndCheckGroupIfSuccess(groupId: string, quantity: number): Promise<any> {
-        const group = await Group.findOne({_id: groupId})
+    static async payAndCheckGroupIfSuccess(o: IOrder, transaction_id: string): Promise<any> {
+        const group = await Group.findOne({_id: o.groupId})
             .populate('commodityId');
-        if (group.status !== 0 || group.group_attach + quantity > group.group_goal || Date.now() > new Date(group.group_time).getTime()) {
-            return {status: -1, group: group}
+        const commodity = await Commodity.findOne({_id: o.commodityId});
+        if (group.status !== 0 || group.group_attach + o.quantity > group.group_goal || Date.now() > new Date(group.group_time).getTime()) {
+            return {status: -1, group: group, commodity: commodity}
         }
-        if (group.group_attach + quantity === group.group_goal) {
+        await commodity.update({
+            stock: commodity.stock - o.quantity,
+            sales: commodity.sales + o.quantity,
+        });
+        await o.update({status: 1, transaction_id: transaction_id, is_notify: true});
+        if (group.group_attach + o.quantity === group.group_goal) {
             await group.update({group_attach: group.group_goal, status: 1});
-            return {status: 1, group: group}
+            return {status: 1, group: group, commodity: commodity}
         } else {
-            await group.update({group_attach: group.group_attach + quantity});
-            return {status: 0, group: group};
+            await group.update({group_attach: group.group_attach + o.quantity});
+            return {status: 0, group: group, commodity: commodity};
         }
     }
 
@@ -85,13 +92,17 @@ export class GroupService {
         return codes
     }
 
-    static async groupSuccess(group: IGroup) {
-        // TODO
-        const orders = await Order.find({groupId: group._id});
+    static async groupSuccess(group: IGroup, commodity: ICommodity) {
+        const orders = await Order.find({groupId: group._id, status: 1, is_notify: true});
         const community = await CommunityService.getCommunityFromId((group.commodityId as ICommodity).communityId);
+        await commodity.update({status: 0, $unset: {groupId: ''}});
         const pick_codes = GroupService.genPickCode(orders.length);
         for (let i in orders) {
             await orders[i].update({pick_code: pick_codes[i], status: 2, pick_address: community.pick_address, pick_time: community.pick_time});
         }
+    }
+
+    static async groupProcessing(group: IGroup) {
+
     }
 }

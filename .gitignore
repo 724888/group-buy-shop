@@ -5,3 +5,5 @@ config/*
 node_modules/*
 niode_modules
 build/config/*
+cert
+cert/*

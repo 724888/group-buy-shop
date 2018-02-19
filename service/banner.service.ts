@@ -16,6 +16,14 @@ export class BannerService {
         return await Banner.find(condition)
     }
 
+    static async getBannerFromId(id: string): Promise<IBanner> {
+        try {
+            return await Banner.findOne({_id: id})
+        } catch (err) {
+            throw createHttpError(400, '无效的轮播图id')
+        }
+    }
+
     static async getBannerFromCommunityId(communityId: string): Promise<Array<IBanner>> {
         try {
             const community = await Community.findOne({_id: communityId});

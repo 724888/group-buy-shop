@@ -4,8 +4,12 @@ import * as createHttpError from "http-errors";
 
 
 export class BannerController {
-    static async getIndexBanner(ctx, next) {
+    static async getIndexBanners(ctx, next) {
         ctx.body = await BannerService.getBanners({type: 1});
+    }
+
+    static async getBannerFromId(ctx, next) {
+        ctx.body = await BannerService.getBannerFromId(ctx.params.id);
     }
 
     static async adminCreateBanner(ctx, next) {

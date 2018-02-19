@@ -21,6 +21,16 @@ class BannerService {
             return yield banner_model_1.Banner.find(condition);
         });
     }
+    static getBannerFromId(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield banner_model_1.Banner.findOne({ _id: id });
+            }
+            catch (err) {
+                throw createHttpError(400, '无效的轮播图id');
+            }
+        });
+    }
     static getBannerFromCommunityId(communityId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

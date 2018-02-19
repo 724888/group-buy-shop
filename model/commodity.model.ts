@@ -18,6 +18,7 @@ export interface ICommodity extends M.Document {
     content: string;
     parameter: any;
     status: number;
+    sales: number;
     groupId: string | IGroup;
     is_hot: boolean;
     is_commend: boolean;
@@ -46,6 +47,10 @@ const commoditySchema = new Schema({
     price: Number,
     specs: [String],
     stock: Number,
+    sales: {
+        type: Number,
+        default: 0
+    },
     content: String,
     parameter: Schema.Types.Mixed,
     status: {

@@ -8,6 +8,8 @@ router.get('commodities/communities/:id', CommodityController.getCommoditiesFrom
 
 router.get('commodities/categories/:id', CommodityController.getCommoditiesFromCategory);
 
+router.get('commodities/:id', CommodityController.getCommodityDetail);
+
 
 // For Administrators
 

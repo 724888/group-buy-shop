@@ -41,7 +41,7 @@ const orderSchema = new Schema({
     payment: Number,
     pick_code: String,
     pick_address: String,
-    pick_time: Date,
+    pick_time: String,
     is_notify: {
         type: Boolean,
         default: false

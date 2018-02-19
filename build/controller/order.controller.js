@@ -65,12 +65,59 @@ class OrderController {
             res.send = function (value) {
                 res.body = value;
             };
-            nodeWeixinPay.callback.notify(config_dev_1.app, config_dev_1.merchant, req, res, (err, result, json) => {
+            nodeWeixinPay.callback.notify(config_dev_1.app, config_dev_1.merchant, req, res, (err, result, json) => __awaiter(this, void 0, void 0, function* () {
                 const notifyData = json.xml;
-                console.log(notifyData, err, result);
                 if (notifyData.result_code === 'SUCCESS') {
-                    order_service_1.OrderService.paySuccess(result.out_trade_no, notifyData.transaction_id);
+                    yield order_service_1.OrderService.paySuccess(result.out_trade_no, notifyData.transaction_id);
                 }
+            }));
+        });
+    }
+    static getOrderDetail(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield auth_service_1.AuthService.getUserFormHeaderToken(ctx);
+            ctx.body = yield order_service_1.OrderService.getOrdersFromTradeNo(ctx.params.out_trade_no, user);
+        });
+    }
+    static getCustomerOrders(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield auth_service_1.AuthService.getUserFormHeaderToken(ctx);
+            ctx.body = yield order_service_1.OrderService.getOrdersFromUser(user, ctx.request.query);
+        });
+    }
+    static getCommodityOrderDetail(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield auth_service_1.AuthService.getUserFormHeaderToken(ctx);
+            ctx.body = yield order_service_1.OrderService.getOrdersFromTradeNo(ctx.params.out_trade_no, user, ctx.params.commodityId);
+        });
+    }
+    static getOrdersFromGroup(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            ctx.body = yield order_service_1.OrderService.getOrdersFromGroup(ctx.params.id);
+        });
+    }
+    static refundOrder(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { out_trade_no, commodityId } = ctx.request.body;
+            const orders = yield order_service_1.OrderService.getOrdersFromTradeNo(out_trade_no, ctx.state.user, commodityId);
+            try {
+                ctx.body = yield order_service_1.OrderService.orderRefund(orders);
+            }
+            catch (err) {
+                throw createHttpError(500, err);
+            }
+        });
+    }
+    static adminRefundOrder(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { out_trade_no, commodityId } = ctx.request.body;
+            const orders = yield order_service_1.OrderService.getOrdersFromTradeNo(out_trade_no, null, commodityId);
+            yield order_service_1.OrderService.orderRefund(orders)
+                .then(data => {
+                ctx.body = data;
+            })
+                .catch(err => {
+                throw createHttpError(400, err.msg);
             });
         });
     }

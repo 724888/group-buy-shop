@@ -62,35 +62,55 @@ export class OrderController {
         res.send = function (value) {
             res.body = value
         };
-        nodeWeixinPay.callback.notify(app, merchant, req, res, (err, result, json) => {
+        nodeWeixinPay.callback.notify(app, merchant, req, res, async (err, result, json) => {
             const notifyData = json.xml;
-            console.log(notifyData, err, result);
             if (notifyData.result_code === 'SUCCESS') {
-                OrderService.paySuccess(result.out_trade_no, notifyData.transaction_id);
-                // Order.find({out_trade_no: result.out_trade_no, is_notify: false})
-                //     .then(orders => {
-                //         orders.forEach(async (o) => {
-                //             await o.update({status: 1, transaction_id: notifyData.transaction_id, is_notify: true});
-                //             const commodity = await Commodity.findOne({_id: o.commodityId});
-                //             const group = await Group.findOne({_id: commodity.groupId});
-                //             await commodity.update({
-                //                 stock: commodity.stock - o.quantity,
-                //                 sales: commodity.sales + o.quantity,
-                //             });
-                //             if (group.group_attach + o.quantity === group.group_goal) {
-                //                 await group.update({group_attach: group.group_attach + o.quantity, status: 1});
-                //                 await commodity.update({$unset: {groupId: ''}, is_activate: false});
-                //                 GroupController.genPickCode(group._id);
-                //             } else {
-                //                 await group.update({group_attach: group.group_attach + o.quantity});
-                //             }
-                //             // wss.broadcast(JSON.stringify({
-                //             //     group_attach: commodity.group_attach + o.quantity,
-                //             //     group_goal: commodity.group_goal
-                //             // }));
-                //         })
-                //     })
+                await OrderService.paySuccess(result.out_trade_no, notifyData.transaction_id);
             }
         })
     }
+
+    static async getOrderDetail(ctx, next) {
+        const user = await AuthService.getUserFormHeaderToken(ctx);
+        ctx.body = await OrderService.getOrdersFromTradeNo(ctx.params.out_trade_no, user)
+    }
+
+    static async getCustomerOrders(ctx, next) {
+        const user = await AuthService.getUserFormHeaderToken(ctx);
+        ctx.body = await OrderService.getOrdersFromUser(user, ctx.request.query);
+    }
+
+    static async getCommodityOrderDetail(ctx, next) {
+        const user = await AuthService.getUserFormHeaderToken(ctx);
+        ctx.body = await OrderService.getOrdersFromTradeNo(ctx.params.out_trade_no, user, ctx.params.commodityId);
+    }
+
+    static async getOrdersFromGroup(ctx, next) {
+        ctx.body = await OrderService.getOrdersFromGroup(ctx.params.id);
+    }
+
+    static async refundOrder(ctx, next) {
+        const {out_trade_no, commodityId} = ctx.request.body;
+        const orders = await OrderService.getOrdersFromTradeNo(out_trade_no, ctx.state.user, commodityId);
+        try {
+            ctx.body = await OrderService.orderRefund(orders);
+        }
+         catch (err) {
+            throw createHttpError(500, err)
+        }
+    }
+
+    static async adminRefundOrder(ctx, next) {
+        const {out_trade_no, commodityId} = ctx.request.body;
+        const orders = await OrderService.getOrdersFromTradeNo(out_trade_no, null, commodityId);
+        await OrderService.orderRefund(orders)
+            .then(data => {
+                ctx.body = data
+            })
+            .catch(err => {
+                throw createHttpError(400, err.msg)
+            })
+    }
+
+
 }

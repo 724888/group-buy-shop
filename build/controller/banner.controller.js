@@ -11,9 +11,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const banner_service_1 = require("../service/banner.service");
 const createHttpError = require("http-errors");
 class BannerController {
-    static getIndexBanner(ctx, next) {
+    static getIndexBanners(ctx, next) {
         return __awaiter(this, void 0, void 0, function* () {
             ctx.body = yield banner_service_1.BannerService.getBanners({ type: 1 });
+        });
+    }
+    static getBannerFromId(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            ctx.body = yield banner_service_1.BannerService.getBannerFromId(ctx.params.id);
         });
     }
     static adminCreateBanner(ctx, next) {

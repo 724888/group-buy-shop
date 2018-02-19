@@ -21,6 +21,11 @@ class CommodityController {
             ctx.body = yield commodity_service_1.CommodityService.getCommoditiesFromCategory(ctx.params.id);
         });
     }
+    static getCommodityDetail(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            ctx.body = yield commodity_service_1.CommodityService.getCommodityFromId(ctx.params.id);
+        });
+    }
     static adminCreateCommodity(ctx, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const commodityInfo = ctx.request.body;

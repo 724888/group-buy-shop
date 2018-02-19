@@ -4,7 +4,9 @@ import {BannerController} from "../controller/banner.controller";
 
 const router = new Router();
 
-router.get('banners', BannerController.getIndexBanner); // 取得首页的轮播图
+router.get('banners', BannerController.getIndexBanners); // 取得首页的轮播图
+
+router.get('banners/:id', BannerController.getBannerFromId);
 
 
 // For Administrators

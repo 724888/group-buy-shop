@@ -11,6 +11,10 @@ export class CommodityController {
         ctx.body = await CommodityService.getCommoditiesFromCategory(ctx.params.id)
     }
 
+    static async getCommodityDetail(ctx, next) {
+        ctx.body = await CommodityService.getCommodityFromId(ctx.params.id);
+    }
+
     static async adminCreateCommodity(ctx, next) {
         const commodityInfo = ctx.request.body;
         const specs = [];

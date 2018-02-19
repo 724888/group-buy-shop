@@ -25,6 +25,10 @@ const commoditySchema = new Schema({
     price: Number,
     specs: [String],
     stock: Number,
+    sales: {
+        type: Number,
+        default: 0
+    },
     content: String,
     parameter: Schema.Types.Mixed,
     status: {

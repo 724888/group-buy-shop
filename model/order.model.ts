@@ -60,7 +60,7 @@ const orderSchema = new Schema({
     payment:  Number, // 需付款的单位是分
     pick_code: String,
     pick_address: String,
-    pick_time: Date,
+    pick_time: String,
     is_notify: {
         type: Boolean,
         default: false
