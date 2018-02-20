@@ -4,7 +4,7 @@ import {UtilsService} from "./utils.service";
 
 import {CommodityService} from "./commodity.service";
 
-import {IGroup} from "../model/group.model";
+import {Group, IGroup} from "../model/group.model";
 
 import {IUser} from "../model/user.model";
 
@@ -13,6 +13,7 @@ import * as createHttpError from "http-errors";
 import {settings, config} from "../config/config.dev";
 
 import {GroupService} from "./group.service";
+import {Commodity, ICommodity} from "../model/commodity.model";
 
 const nodeWeixinPay = require('node-weixin-pay');
 
@@ -128,6 +129,15 @@ export class OrderService {
                 };
                 await nodeWeixinPay.api.refund.create(config, params, async function (error, data, json) {
                     if (json.result_code === 'SUCCESS') {
+                        const c = await Commodity.findOne({_id: (o.commodityId as ICommodity)._id});
+                        const g = await Group.findOne({_id: o.groupId});
+                        await g.update({
+                            group_attach: g.group_attach - o.quantity
+                        });
+                        await c.update({
+                            stock: c.stock + o.quantity,
+                            sales: c.stock - o.quantity
+                        });
                         resolve(await Order.findOneAndUpdate({_id: o._id}, {status: 4, out_refund_no: json.out_refund_no, refund_id: json.refund_id}, {new: true}))
                     } else {
                         reject({status: false, msg: json.err_code_des})

@@ -11,9 +11,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const order_model_1 = require("../model/order.model");
 const utils_service_1 = require("./utils.service");
 const commodity_service_1 = require("./commodity.service");
+const group_model_1 = require("../model/group.model");
 const createHttpError = require("http-errors");
 const config_dev_1 = require("../config/config.dev");
 const group_service_1 = require("./group.service");
+const commodity_model_1 = require("../model/commodity.model");
 const nodeWeixinPay = require('node-weixin-pay');
 class OrderService {
     static checkIfOrderRequestCanPass(o) {
@@ -132,6 +134,15 @@ class OrderService {
                     yield nodeWeixinPay.api.refund.create(config_dev_1.config, params, function (error, data, json) {
                         return __awaiter(this, void 0, void 0, function* () {
                             if (json.result_code === 'SUCCESS') {
+                                const c = yield commodity_model_1.Commodity.findOne({ _id: o.commodityId._id });
+                                const g = yield group_model_1.Group.findOne({ _id: o.groupId });
+                                yield g.update({
+                                    group_attach: g.group_attach - o.quantity
+                                });
+                                yield c.update({
+                                    stock: c.stock + o.quantity,
+                                    sales: c.stock - o.quantity
+                                });
                                 resolve(yield order_model_1.Order.findOneAndUpdate({ _id: o._id }, { status: 4, out_refund_no: json.out_refund_no, refund_id: json.refund_id }, { new: true }));
                             }
                             else {
