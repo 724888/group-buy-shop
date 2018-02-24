@@ -32,7 +32,7 @@ class CommodityService {
     static getCommodityFromId(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield commodity_model_1.Commodity.findOne({ _id: id })
-                .populate('communityId categoryId groupId');
+                .populate('categoryId groupId bannerIds');
         });
     }
     static updateCommodity(id, name, bannerIds, communityId, categoryId, price, stock, specs, content, is_hot, is_commend) {
@@ -58,8 +58,8 @@ class CommodityService {
                     query.communityId = id;
                     query.status = { $ne: 0 };
                     const filterQuery = _.pick(query, ['is_commend', 'is_hot', 'communityId', 'status']);
-                    return yield commodity_model_1.Commodity.find(filterQuery, { content: 0, specs: 0, communityId: 0, categoryId: 0, status: 0, meta: 0 })
-                        .populate('bannerIds groupId');
+                    return yield commodity_model_1.Commodity.find(filterQuery, { content: 0, specs: 0, communityId: 0, status: 0, meta: 0 })
+                        .populate('bannerIds groupId categoryId');
                 }
             }
             else {
@@ -70,8 +70,8 @@ class CommodityService {
     }
     static getCommoditiesFromCategory(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield commodity_model_1.Commodity.find({ categoryId: id, status: { $ne: 0 } }, { content: 0, specs: 0, communityId: 0, categoryId: 0, status: 0, meta: 0 })
-                .populate('communityId categoryId bannerIds');
+            return yield commodity_model_1.Commodity.find({ categoryId: id, status: { $ne: 0 } }, { content: 0, specs: 0, communityId: 0, status: 0, meta: 0 })
+                .populate('communityId categoryId bannerIds groupId');
         });
     }
     static deleteCommodity(id) {

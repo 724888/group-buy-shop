@@ -22,6 +22,7 @@ class AuthController {
                         msg: '该用户已经注册过',
                         token: auth_service_1.AuthService.jwtSign(user),
                         usertype: user.usertype,
+                        username: user.username,
                         gen_time: new Date().getTime(),
                     };
                 }
@@ -51,6 +52,7 @@ class AuthController {
                     status: 1,
                     token: auth_service_1.AuthService.jwtSign(user),
                     usertype: user.usertype,
+                    username: user.username,
                     gen_time: new Date().getTime()
                 };
             }

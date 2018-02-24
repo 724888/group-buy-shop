@@ -25,7 +25,7 @@ export class CommodityService {
 
     static async getCommodityFromId(id: string): Promise<ICommodity> {
         return await Commodity.findOne({_id: id})
-            .populate('communityId categoryId groupId')
+            .populate('categoryId groupId bannerIds')
     }
 
     static async updateCommodity(id: string, name: string, bannerIds: string[], communityId: string,
@@ -51,8 +51,8 @@ export class CommodityService {
                 query.communityId = id;
                 query.status = {$ne: 0};
                 const filterQuery = _.pick(query, ['is_commend', 'is_hot', 'communityId', 'status']);
-                return await Commodity.find(filterQuery, {content: 0, specs: 0, communityId: 0, categoryId: 0, status: 0, meta: 0})
-                    .populate('bannerIds groupId')
+                return await Commodity.find(filterQuery, {content: 0, specs: 0, communityId: 0, status: 0, meta: 0})
+                    .populate('bannerIds groupId categoryId')
             }
         } else {
             return await Commodity.find({communityId: id})
@@ -61,8 +61,8 @@ export class CommodityService {
     }
 
     static async getCommoditiesFromCategory(id: string): Promise<Array<ICommodity>> {
-        return await Commodity.find({categoryId: id, status: {$ne: 0}}, {content: 0, specs: 0, communityId: 0, categoryId: 0, status: 0, meta: 0})
-            .populate('communityId categoryId bannerIds')
+        return await Commodity.find({categoryId: id, status: {$ne: 0}}, {content: 0, specs: 0, communityId: 0, status: 0, meta: 0})
+            .populate('communityId categoryId bannerIds groupId')
     }
 
 

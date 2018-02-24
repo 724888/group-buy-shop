@@ -179,7 +179,8 @@ export class OrderService {
                 payment: 1,
                 pick_time: 1,
                 pick_address: 1,
-                pick_code: 1
+                pick_code: 1,
+                out_trade_no: 1
             })
                 .populate('commodityId ', {name: 1, bannerIds: 1})
         } else {
@@ -190,7 +191,8 @@ export class OrderService {
                 payment: 1,
                 pick_time: 1,
                 pick_address: 1,
-                pick_code: 1
+                pick_code: 1,
+                out_trade_no: 1
             })
                 .populate('commodityId ', {name: 1, bannerIds: 1})
         }
@@ -198,6 +200,6 @@ export class OrderService {
 
     static async getOrdersFromGroup(groupId: string): Promise<Array<IOrder>> {
         return await Order.find({groupId: groupId, status: {$ne: 0}})
-            .populate('userId commodityId')
+            .populate('userId commodityId', '-password -openid')
     }
 }

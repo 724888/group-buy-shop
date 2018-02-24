@@ -12,6 +12,7 @@ export class AuthController {
                     msg: '该用户已经注册过',
                     token: AuthService.jwtSign(user),
                     usertype: user.usertype,
+                    username: user.username,
                     gen_time: new Date().getTime(),
                 }
             } else {
@@ -38,6 +39,7 @@ export class AuthController {
                 status: 1,
                 token: AuthService.jwtSign(user),
                 usertype: user.usertype,
+                username: user.username,
                 gen_time: new Date().getTime()
             }
         } else {
