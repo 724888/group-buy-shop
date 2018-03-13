@@ -2,6 +2,7 @@ import {settings} from "../config/config.dev";
 
 import * as M from 'mongoose';
 import {IGroup} from "./group.model";
+import {IBanner} from "./banner.model";
 
 const mongoose = settings.mongoose;
 
@@ -12,6 +13,7 @@ export interface ICommodity extends M.Document {
     bannerIds: Array<string>;
     communityId: string;
     categoryId: string;
+    cover?: IBanner;
     price: number;
     specs: Array<string>;
     stock: number;
@@ -23,6 +25,7 @@ export interface ICommodity extends M.Document {
     is_hot: boolean;
     is_commend: boolean;
     meta: { createdAt: string, updatedAt: string };
+    _doc: any;
 }
 
 const commoditySchema = new Schema({
@@ -78,7 +81,8 @@ const commoditySchema = new Schema({
             type: Date,
             default: Date.now()
         }
-    }
+    },
+
 });
 
 commoditySchema.pre('save', function (next) {

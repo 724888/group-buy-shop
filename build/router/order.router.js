@@ -9,6 +9,7 @@ router.get('orders/customer', order_controller_1.OrderController.getCustomerOrde
 router.get('orders/:out_trade_no', order_controller_1.OrderController.getOrderDetail);
 router.get('orders/:out_trade_no/commodity/:commodityId', order_controller_1.OrderController.getCommodityOrderDetail);
 router.post('orders/refund', order_controller_1.OrderController.refundOrder);
+router.post('orders/pickup', order_controller_1.OrderController.orderPickup);
 router.get('admin_orders/group/:id', order_controller_1.OrderController.getOrdersFromGroup);
 router.post('admin_orders/refund', order_controller_1.OrderController.adminRefundOrder);
 exports.orderRouter = router;

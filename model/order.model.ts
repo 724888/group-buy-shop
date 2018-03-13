@@ -87,6 +87,10 @@ const orderSchema = new Schema({
         4表示正在退款
          */
     },
+    is_pickup: {
+        type: Boolean,
+        default: false
+    }
 });
 
 orderSchema.pre('save', async function (next) {

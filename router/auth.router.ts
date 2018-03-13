@@ -15,6 +15,12 @@ router.post('login', AuthController.adminLogin);
 
 router.get('admin_user', AuthController.adminGetAdminUser);
 
+router.patch('admin_user/:id', AuthController.adminUpdateUser);
+
+router.get('admin_user/all', AuthController.adminGetAllUser);
+
+router.post('admin_user/all', AuthController.adminSearchUser);
+
 router.get('admin_user/:id', AuthController.adminGetUser);
 
 export const authRouter = router;

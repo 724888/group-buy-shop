@@ -14,6 +14,7 @@ import {settings, config} from "../config/config.dev";
 
 import {GroupService} from "./group.service";
 import {Commodity, ICommodity} from "../model/commodity.model";
+import {Banner} from "../model/banner.model";
 
 const nodeWeixinPay = require('node-weixin-pay');
 
@@ -48,7 +49,9 @@ export class OrderService {
                     payment: 1,
                     pick_time: 1,
                     pick_address: 1,
-                    pick_code: 1
+                    pick_code: 1,
+                    meta: 1,
+                    status: 1,
                 })
                     .populate('commodityId ', {name: 1, bannerIds: 1})
             } else {
@@ -59,7 +62,9 @@ export class OrderService {
                     payment: 1,
                     pick_time: 1,
                     pick_address: 1,
-                    pick_code: 1
+                    pick_code: 1,
+                    meta: 1,
+                    status: 1,
                 })
                     .populate('commodityId ', {name: 1, bannerIds: 1})
             }
@@ -180,11 +185,19 @@ export class OrderService {
                 pick_time: 1,
                 pick_address: 1,
                 pick_code: 1,
-                out_trade_no: 1
+                out_trade_no: 1,
+                meta: 1,
+                status: 1
             })
-                .populate('commodityId ', {name: 1, bannerIds: 1})
+                .populate('commodityId groupId')
+                .then(async (res) => {
+                    for (let o of res) {
+                        (o.commodityId as ICommodity)._doc.cover = await Banner.findOne({_id: (o.commodityId as ICommodity).bannerIds[0]});
+                    }
+                    return res
+                })
         } else {
-            return await Order.find({userId: user._id, status: {$ne: 0}}, {
+            return await Order.find({userId: user._id, status: {$in: [2,3,4]}}, {
                 commodityId: 1,
                 quantity: 1,
                 spec: 1,
@@ -192,14 +205,26 @@ export class OrderService {
                 pick_time: 1,
                 pick_address: 1,
                 pick_code: 1,
-                out_trade_no: 1
+                out_trade_no: 1,
+                meta: 1,
+                status: 1
             })
-                .populate('commodityId ', {name: 1, bannerIds: 1})
+                .populate('commodityId groupId')
+                .then(async (res) => {
+                    for (let o of res) {
+                        (o.commodityId as ICommodity)._doc.cover = await Banner.findOne({_id: (o.commodityId as ICommodity).bannerIds[0]});
+                    }
+                    return res
+                })
         }
     }
 
     static async getOrdersFromGroup(groupId: string): Promise<Array<IOrder>> {
         return await Order.find({groupId: groupId, status: {$ne: 0}})
             .populate('userId commodityId', '-password -openid')
+    }
+
+    static async orderHasPickUp(out_trade_no: string): Promise<IOrder> {
+        return await Order.findByIdAndUpdate({out_trade_no: out_trade_no}, {is_pickup: true}, {new: true})
     }
 }

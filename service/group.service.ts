@@ -33,7 +33,7 @@ export class GroupService {
     static createTimeoutCheckJob(groupId: string, group_time: number) {
         scheduleJob(new Date(group_time), async function (id) {
             const g = await Group.findOne({_id: id});
-            if (g.group_attach < g.group_goal) {
+            if (g.group_attach < g.group_goal && g.group_time === new Date().getTime()) {
                 await g.update({status: 2});
                 await Commodity.update({_id: g.commodityId}, {status: 0, $unset: {groupId: ''}})
             }
@@ -103,6 +103,6 @@ export class GroupService {
     }
 
     static async groupProcessing(group: IGroup) {
-
+  
     }
 }

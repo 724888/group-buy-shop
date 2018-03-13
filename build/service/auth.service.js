@@ -32,6 +32,11 @@ class AuthService {
             return yield user_model_1.User.findOne({ openid: openid }, { password: 0 });
         });
     }
+    static getUsersFromUsername(username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield user_model_1.User.find({ username: new RegExp(username) }, '-password');
+        });
+    }
     static getUserFromId(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -118,6 +123,14 @@ class AuthService {
             else {
                 return user;
             }
+        });
+    }
+    static getUsers(page, listnum = 10) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield user_model_1.User.find({}, '-password')
+                .sort({ 'signup_date': -1 })
+                .limit(listnum)
+                .skip((page - 1) * listnum);
         });
     }
 }

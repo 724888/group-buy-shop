@@ -16,6 +16,7 @@ const createHttpError = require("http-errors");
 const config_dev_1 = require("../config/config.dev");
 const group_service_1 = require("./group.service");
 const commodity_model_1 = require("../model/commodity.model");
+const banner_model_1 = require("../model/banner.model");
 const nodeWeixinPay = require('node-weixin-pay');
 class OrderService {
     static checkIfOrderRequestCanPass(o) {
@@ -45,7 +46,9 @@ class OrderService {
                         payment: 1,
                         pick_time: 1,
                         pick_address: 1,
-                        pick_code: 1
+                        pick_code: 1,
+                        meta: 1,
+                        status: 1,
                     })
                         .populate('commodityId ', { name: 1, bannerIds: 1 });
                 }
@@ -57,7 +60,9 @@ class OrderService {
                         payment: 1,
                         pick_time: 1,
                         pick_address: 1,
-                        pick_code: 1
+                        pick_code: 1,
+                        meta: 1,
+                        status: 1,
                     })
                         .populate('commodityId ', { name: 1, bannerIds: 1 });
                 }
@@ -189,12 +194,20 @@ class OrderService {
                     pick_time: 1,
                     pick_address: 1,
                     pick_code: 1,
-                    out_trade_no: 1
+                    out_trade_no: 1,
+                    meta: 1,
+                    status: 1
                 })
-                    .populate('commodityId ', { name: 1, bannerIds: 1 });
+                    .populate('commodityId groupId')
+                    .then((res) => __awaiter(this, void 0, void 0, function* () {
+                    for (let o of res) {
+                        o.commodityId._doc.cover = yield banner_model_1.Banner.findOne({ _id: o.commodityId.bannerIds[0] });
+                    }
+                    return res;
+                }));
             }
             else {
-                return yield order_model_1.Order.find({ userId: user._id, status: { $ne: 0 } }, {
+                return yield order_model_1.Order.find({ userId: user._id, status: { $in: [2, 3, 4] } }, {
                     commodityId: 1,
                     quantity: 1,
                     spec: 1,
@@ -202,9 +215,17 @@ class OrderService {
                     pick_time: 1,
                     pick_address: 1,
                     pick_code: 1,
-                    out_trade_no: 1
+                    out_trade_no: 1,
+                    meta: 1,
+                    status: 1
                 })
-                    .populate('commodityId ', { name: 1, bannerIds: 1 });
+                    .populate('commodityId groupId')
+                    .then((res) => __awaiter(this, void 0, void 0, function* () {
+                    for (let o of res) {
+                        o.commodityId._doc.cover = yield banner_model_1.Banner.findOne({ _id: o.commodityId.bannerIds[0] });
+                    }
+                    return res;
+                }));
             }
         });
     }
@@ -212,6 +233,11 @@ class OrderService {
         return __awaiter(this, void 0, void 0, function* () {
             return yield order_model_1.Order.find({ groupId: groupId, status: { $ne: 0 } })
                 .populate('userId commodityId', '-password -openid');
+        });
+    }
+    static orderHasPickUp(out_trade_no) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield order_model_1.Order.findByIdAndUpdate({ out_trade_no: out_trade_no }, { is_pickup: true }, { new: true });
         });
     }
 }

@@ -16,6 +16,8 @@ router.get('orders/:out_trade_no/commodity/:commodityId', OrderController.getCom
 
 router.post('orders/refund', OrderController.refundOrder);
 
+router.post('orders/pickup', OrderController.orderPickup);
+
 
 
 

@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const commodity_model_1 = require("../model/commodity.model");
 const banner_model_1 = require("../model/banner.model");
 const _ = require("lodash");
+const group_model_1 = require("../model/group.model");
 class CommodityService {
     static saveCommodity(name, bannerIds, communityId, categoryId, price, stock, specs, content, is_hot, is_commend) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -79,6 +80,7 @@ class CommodityService {
             try {
                 const c = yield commodity_model_1.Commodity.findOneAndRemove({ _id: id });
                 yield banner_model_1.Banner.remove({ _id: { $in: c.bannerIds } });
+                yield group_model_1.Group.remove({ commodityId: id });
                 return true;
             }
             catch (err) {

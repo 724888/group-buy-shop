@@ -1,4 +1,6 @@
 import {AuthService} from "../service/auth.service";
+import {User} from "../model/user.model";
+import * as md5 from "js-md5";
 
 export class AuthController {
     static async getOpenid(ctx, next) {
@@ -66,5 +68,26 @@ export class AuthController {
 
     static async adminGetUser(ctx, next) {
         ctx.body = await AuthService.getUserFromId(ctx.params.id)
+    }
+
+    static async adminGetAllUser(ctx, next) {
+        const page = ctx.query.page | 1;
+        ctx.body = await AuthService.getUsers(Number(page))
+    }
+
+    static async adminSearchUser(ctx, next) {
+        const username = ctx.request.body.username;
+        ctx.body = await AuthService.getUsersFromUsername(username)
+    }
+
+    static async adminUpdateUser(ctx, next) {
+        switch (ctx.request.body.type) {
+            case 3: {
+                ctx.body = await User.findOneAndUpdate({_id: ctx.params.id}, {password: md5(ctx.request.body.password), usertype: 2}, {
+                    new: true
+                });
+                break;
+            }
+        }
     }
 }

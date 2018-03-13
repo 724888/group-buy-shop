@@ -56,7 +56,7 @@ const commoditySchema = new Schema({
             type: Date,
             default: Date.now()
         }
-    }
+    },
 });
 commoditySchema.pre('save', function (next) {
     this.meta.createdAt = this.meta.updatedAt = Date.now();

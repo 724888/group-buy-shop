@@ -9,6 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const auth_service_1 = require("../service/auth.service");
+const user_model_1 = require("../model/user.model");
+const md5 = require("js-md5");
 class AuthController {
     static getOpenid(ctx, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -82,6 +84,30 @@ class AuthController {
     static adminGetUser(ctx, next) {
         return __awaiter(this, void 0, void 0, function* () {
             ctx.body = yield auth_service_1.AuthService.getUserFromId(ctx.params.id);
+        });
+    }
+    static adminGetAllUser(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const page = ctx.query.page | 1;
+            ctx.body = yield auth_service_1.AuthService.getUsers(Number(page));
+        });
+    }
+    static adminSearchUser(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const username = ctx.request.body.username;
+            ctx.body = yield auth_service_1.AuthService.getUsersFromUsername(username);
+        });
+    }
+    static adminUpdateUser(ctx, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            switch (ctx.request.body.type) {
+                case 3: {
+                    ctx.body = yield user_model_1.User.findOneAndUpdate({ _id: ctx.params.id }, { password: md5(ctx.request.body.password), usertype: 2 }, {
+                        new: true
+                    });
+                    break;
+                }
+            }
         });
     }
 }

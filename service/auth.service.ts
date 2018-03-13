@@ -27,6 +27,10 @@ export class AuthService {
         return await User.findOne({openid: openid}, {password: 0})
     }
 
+    static async getUsersFromUsername(username: string): Promise<IUser[]> {
+        return await User.find({username: new RegExp(username)}, '-password')
+    }
+
     static async getUserFromId(id: string): Promise<IUser> {
         try {
             return await User.findOne({_id: id}, {password: 0})
@@ -88,18 +92,26 @@ export class AuthService {
 
     static async getAdminUser(user: IUser): Promise<Array<IUser>> {
         if (user.usertype === 1) {
-            return await User.find({usertype: {$in: [1,2]}}, {password: 0});
+            return await User.find({usertype: {$in: [1, 2]}}, {password: 0});
         } else {
             return [user]
         }
     }
 
     static async checkIfAdminUser(user: IUser): Promise<IUser> {
-        if (user.usertype !==1 && user.usertype !== 2) {
+        if (user.usertype !== 1 && user.usertype !== 2) {
             throw createHttpError(401)
         } else {
             return user
         }
+    }
+
+    static async getUsers(page: number, listnum=10): Promise<IUser[]> {
+        return await User.find({},'-password')
+            .sort({'signup_date': -1})
+            .limit(listnum)
+            .skip((page - 1) * listnum)
+
     }
 }
 

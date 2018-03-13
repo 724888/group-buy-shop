@@ -60,6 +60,10 @@ const orderSchema = new Schema({
         type: Number,
         default: 0
     },
+    is_pickup: {
+        type: Boolean,
+        default: false
+    }
 });
 orderSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {

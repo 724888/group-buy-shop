@@ -40,7 +40,7 @@ class GroupService {
         node_schedule_1.scheduleJob(new Date(group_time), function (id) {
             return __awaiter(this, void 0, void 0, function* () {
                 const g = yield group_model_1.Group.findOne({ _id: id });
-                if (g.group_attach < g.group_goal) {
+                if (g.group_attach < g.group_goal && g.group_time === new Date().getTime()) {
                     yield g.update({ status: 2 });
                     yield commodity_model_1.Commodity.update({ _id: g.commodityId }, { status: 0, $unset: { groupId: '' } });
                 }
