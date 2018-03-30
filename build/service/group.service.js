@@ -13,6 +13,7 @@ const commodity_model_1 = require("../model/commodity.model");
 const node_schedule_1 = require("node-schedule");
 const order_model_1 = require("../model/order.model");
 const community_service_1 = require("./community.service");
+const banner_model_1 = require("../model/banner.model");
 class GroupService {
     static saveGroup(communityId, commodityId, group_price, group_goal, group_attach, group_time) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -33,7 +34,13 @@ class GroupService {
         return __awaiter(this, void 0, void 0, function* () {
             return yield group_model_1.Group.find({ communityId: id })
                 .populate('commodityId')
-                .sort({ 'meta.createdAt': -1 });
+                .sort({ 'meta.createdAt': -1 })
+                .then((res) => __awaiter(this, void 0, void 0, function* () {
+                for (let o of res) {
+                    o.commodityId._doc.cover = yield banner_model_1.Banner.findOne({ _id: o.commodityId.bannerIds[0] });
+                }
+                return res;
+            }));
         });
     }
     static createTimeoutCheckJob(groupId, group_time) {

@@ -112,9 +112,14 @@ export class OrderController {
             })
     }
 
-    static async orderPickup(ctx, next) {
-        const out_trade_no = ctx.request.body.out_trade_no;
-        ctx.body = await OrderService.orderHasPickUp(out_trade_no);
+    // static async orderPickup(ctx, next) {
+    // //     const out_trade_no = ctx.request.body.out_trade_no;
+    // //     ctx.body = await OrderService.orderHasPickUp(out_trade_no);
+    // // }
+
+    static async adminOrderPickup(ctx, next) {
+        const {out_trade_no, commodityId} = ctx.request.body;
+        ctx.body = await OrderService.orderHasPickUp(out_trade_no, commodityId);
     }
 
 

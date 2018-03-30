@@ -121,10 +121,10 @@ class OrderController {
             });
         });
     }
-    static orderPickup(ctx, next) {
+    static adminOrderPickup(ctx, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const out_trade_no = ctx.request.body.out_trade_no;
-            ctx.body = yield order_service_1.OrderService.orderHasPickUp(out_trade_no);
+            const { out_trade_no, commodityId } = ctx.request.body;
+            ctx.body = yield order_service_1.OrderService.orderHasPickUp(out_trade_no, commodityId);
         });
     }
 }

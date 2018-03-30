@@ -4,6 +4,7 @@ import {Banner} from "../model/banner.model";
 
 import * as _ from "lodash";
 import {Group} from "../model/group.model";
+import {Order} from "../model/order.model";
 
 export class CommodityService {
     static async saveCommodity(name: string, bannerIds: string[], communityId: string,
@@ -72,6 +73,7 @@ export class CommodityService {
             const c = await Commodity.findOneAndRemove({_id: id});
             await Banner.remove({_id: {$in: c.bannerIds}});
             await Group.remove({commodityId: id});
+            await Order.remove({commodityId: id});
             return true
         } catch (err) {
             return false

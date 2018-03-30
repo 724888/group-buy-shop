@@ -177,7 +177,7 @@ export class OrderService {
 
     static async getOrdersFromUser(user: IUser, query): Promise<Array<IOrder>> {
         if (query.status) {
-            return await Order.find({userId: user._id, status: query.status}, {
+            return await Order.find({userId: user._id, status: query.status, is_pickup: false}, {
                 commodityId: 1,
                 quantity: 1,
                 spec: 1,
@@ -224,7 +224,7 @@ export class OrderService {
             .populate('userId commodityId', '-password -openid')
     }
 
-    static async orderHasPickUp(out_trade_no: string): Promise<IOrder> {
-        return await Order.findByIdAndUpdate({out_trade_no: out_trade_no}, {is_pickup: true}, {new: true})
+    static async orderHasPickUp(out_trade_no: string, commodityId: string): Promise<IOrder> {
+        return await Order.findOneAndUpdate({out_trade_no: out_trade_no, commodityId: commodityId}, {is_pickup: true}, {new: true})
     }
 }

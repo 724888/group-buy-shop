@@ -7,6 +7,7 @@ import {scheduleJob} from "node-schedule";
 import {IOrder, Order} from "../model/order.model";
 
 import {CommunityService} from "./community.service";
+import {Banner} from "../model/banner.model";
 
 export class GroupService {
     static async saveGroup(communityId: string, commodityId: string, group_price: number,
@@ -28,6 +29,12 @@ export class GroupService {
         return await Group.find({communityId: id})
             .populate('commodityId')
             .sort({'meta.createdAt': -1})
+            .then(async (res) => {
+                for (let o of res) {
+                    (o.commodityId as ICommodity)._doc.cover = await Banner.findOne({_id: (o.commodityId as ICommodity).bannerIds[0]});
+                }
+                return res
+            })
     }
 
     static createTimeoutCheckJob(groupId: string, group_time: number) {

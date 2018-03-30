@@ -186,7 +186,7 @@ class OrderService {
     static getOrdersFromUser(user, query) {
         return __awaiter(this, void 0, void 0, function* () {
             if (query.status) {
-                return yield order_model_1.Order.find({ userId: user._id, status: query.status }, {
+                return yield order_model_1.Order.find({ userId: user._id, status: query.status, is_pickup: false }, {
                     commodityId: 1,
                     quantity: 1,
                     spec: 1,
@@ -235,9 +235,9 @@ class OrderService {
                 .populate('userId commodityId', '-password -openid');
         });
     }
-    static orderHasPickUp(out_trade_no) {
+    static orderHasPickUp(out_trade_no, commodityId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield order_model_1.Order.findByIdAndUpdate({ out_trade_no: out_trade_no }, { is_pickup: true }, { new: true });
+            return yield order_model_1.Order.findOneAndUpdate({ out_trade_no: out_trade_no, commodityId: commodityId }, { is_pickup: true }, { new: true });
         });
     }
 }

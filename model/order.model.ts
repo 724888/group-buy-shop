@@ -98,7 +98,7 @@ orderSchema.pre('save', async function (next) {
     const o = await Commodity.findOne({_id: this.commodityId})
         .populate('groupId');
     this.groupId = (o.groupId as IGroup)._id;
-    this.payment = (o.groupId as IGroup).group_price * this.quantity * 100;
+    this.payment = Math.floor((o.groupId as IGroup).group_price * this.quantity * 100);
     next();
 });
 

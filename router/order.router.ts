@@ -16,7 +16,7 @@ router.get('orders/:out_trade_no/commodity/:commodityId', OrderController.getCom
 
 router.post('orders/refund', OrderController.refundOrder);
 
-router.post('orders/pickup', OrderController.orderPickup);
+// router.post('orders/pickup', OrderController.orderPickup);
 
 
 
@@ -26,5 +26,7 @@ router.post('orders/pickup', OrderController.orderPickup);
 router.get('admin_orders/group/:id', OrderController.getOrdersFromGroup);
 
 router.post('admin_orders/refund', OrderController.adminRefundOrder);
+
+router.post('admin_orders/pickup', OrderController.adminOrderPickup);
 
 export const orderRouter = router;

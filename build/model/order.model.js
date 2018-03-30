@@ -71,7 +71,7 @@ orderSchema.pre('save', function (next) {
         const o = yield commodity_model_1.Commodity.findOne({ _id: this.commodityId })
             .populate('groupId');
         this.groupId = o.groupId._id;
-        this.payment = o.groupId.group_price * this.quantity * 100;
+        this.payment = Math.floor(o.groupId.group_price * this.quantity * 100);
         next();
     });
 });
